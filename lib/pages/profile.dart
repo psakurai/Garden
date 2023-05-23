@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:garden/pages/sign_in.dart';
 import 'package:garden/services/auth.dart';
 import 'package:garden/utils/styles.dart';
 import 'package:garden/components/heading.dart';
@@ -36,6 +37,10 @@ class UserProfile extends StatelessWidget {
               onTap: () async {
                 //Navigator.pop(context);
                 await _auth.signOut();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UserSignIn()),
+                );
               },
             ),
           ],

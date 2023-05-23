@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DatabaseService {
   final String uid;
@@ -16,6 +17,10 @@ class DatabaseService {
       'expertise_name': expertiseName,
       'access_level': accessLevel,
     });
+  }
+
+  Stream<QuerySnapshot> get user {
+    return gardenCollection.snapshots();
   }
 
   // User? userFirebase = FirebaseAuth.instance.currentUser;
