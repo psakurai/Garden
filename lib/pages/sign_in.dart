@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:garden/components/bottom_nav.dart';
+import 'package:garden/onboard_screen/onboarding.dart';
 import 'package:garden/pages/sign_up.dart';
+import 'package:garden/services/access_level.dart';
 import 'package:garden/services/auth.dart';
 import 'package:garden/components/loading.dart';
 
@@ -17,6 +20,19 @@ class _UserSignInState extends State<UserSignIn> {
   String password = "";
   String error = "";
   bool loading = false;
+  //final textFieldFocusNode = FocusNode();
+  bool _obscured = false;
+
+  void _toggleObscured() {
+    setState(() {
+      _obscured = !_obscured;
+      // if (textFieldFocusNode.hasPrimaryFocus)
+      //   return; // If focus is on text field, dont unfocus
+      // textFieldFocusNode.canRequestFocus =
+      //     false; // Prevents focus if tap on eye
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return loading
@@ -26,7 +42,8 @@ class _UserSignInState extends State<UserSignIn> {
             appBar: AppBar(
               backgroundColor: Colors.brown[400],
               elevation: 0.0,
-              title: const Text('Dah sign in'),
+              title: const Text('Garden'),
+              centerTitle: true,
               automaticallyImplyLeading: false,
             ),
             body: Container(
@@ -36,22 +53,81 @@ class _UserSignInState extends State<UserSignIn> {
                   key: _formKey,
                   child: Column(
                     children: <Widget>[
+                      const Text(
+                        'Sign In',
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontFamily: 'Satoshi',
+                          color: Colors.red,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 30,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 30.0,
+                      ),
                       TextFormField(
                         validator: (val) =>
                             val!.isEmpty ? "Enter an email" : null,
                         onChanged: (val) {
                           setState(() => email = val);
                         },
+                        decoration: InputDecoration(
+                          floatingLabelBehavior: FloatingLabelBehavior
+                              .never, //Hides label on focus or if filled
+                          labelText: "Email",
+                          hintText: 'Email',
+                          filled: true, // Needed for adding a fill color
+                          fillColor: Colors.grey,
+                          isDense: true, // Reduces height a bit
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none, // No border
+                            borderRadius: BorderRadius.circular(
+                                12), // Apply corner radius
+                          ),
+                          prefixIcon: const Icon(Icons.email_rounded, size: 24),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 12.0,
                       ),
                       TextFormField(
-                        obscureText: true,
-                        validator: (val) =>
-                            (val!.length < 8 || val!.length > 21)
-                                ? "Enter a password 8 to 20 chars long"
-                                : null,
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: _obscured,
+                        //focusNode: textFieldFocusNode,
+                        validator: (val) => (val!.length < 8 || val.length > 21)
+                            ? "Enter a password 8 to 20 chars long"
+                            : null,
                         onChanged: (val) {
                           setState(() => password = val);
                         },
+                        decoration: InputDecoration(
+                          floatingLabelBehavior: FloatingLabelBehavior
+                              .never, //Hides label on focus or if filled
+                          labelText: "Password",
+                          hintText: 'Password',
+                          filled: true, // Needed for adding a fill color
+                          fillColor: Colors.grey,
+                          isDense: true, // Reduces height a bit
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none, // No border
+                            borderRadius: BorderRadius.circular(
+                                12), // Apply corner radius
+                          ),
+                          prefixIcon: const Icon(Icons.lock_rounded, size: 24),
+                          suffixIcon: Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 4, 0),
+                            child: GestureDetector(
+                              onTap: _toggleObscured,
+                              child: Icon(
+                                _obscured
+                                    ? Icons.visibility_rounded
+                                    : Icons.visibility_off_rounded,
+                                size: 24,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -70,6 +146,13 @@ class _UserSignInState extends State<UserSignIn> {
                                 loading = false;
                               } else {
                                 setState(() => error = '');
+
+                                // ignore: use_build_context_synchronously
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AccessLevel()),
+                                );
                                 loading = false;
                               }
                             }
@@ -82,22 +165,11 @@ class _UserSignInState extends State<UserSignIn> {
                         style:
                             const TextStyle(color: Colors.red, fontSize: 14.0),
                       ),
-                      // ElevatedButton(
-                      //   child: const Text('SIgn in anon!'),
-                      //   onPressed: () async {
-                      //     dynamic result = await _auth.signInAnon();
-                      //     if (result == null) {
-                      //       print('CANNOT SIGNIN');
-                      //     } else {
-                      //       print('berjaya signin');
-                      //       print(result.uid);
-                      //     }
-                      //   },
-                      // ),
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             textStyle: TextStyle(fontSize: 20),
                             minimumSize: Size.fromHeight(50),
+                            backgroundColor: const Color(0xff28292a),
                           ),
                           child: const Text('Register'),
                           onPressed: () {

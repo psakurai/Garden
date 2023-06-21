@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:garden/components/loading.dart';
+import 'package:garden/pages/email_verify.dart';
 
 import '../services/auth.dart';
 
@@ -27,7 +28,8 @@ class _UserSignupState extends State<UserSignup> {
             appBar: AppBar(
               backgroundColor: Colors.brown[400],
               elevation: 0.0,
-              title: const Text('Dah sign in'),
+              title: const Text('Garden'),
+              centerTitle: true,
             ),
             body: Container(
                 padding: const EdgeInsets.symmetric(
@@ -37,6 +39,13 @@ class _UserSignupState extends State<UserSignup> {
                   child: Column(
                     children: <Widget>[
                       TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: "Email",
+                          prefixIcon: Icon(Icons.star),
+                          filled: true,
+                          fillColor: Colors.grey,
+                          hintText: 'email@gmail.com',
+                        ),
                         validator: (val) =>
                             val!.isEmpty ? "Enter an email" : null,
                         onChanged: (val) {
@@ -44,6 +53,7 @@ class _UserSignupState extends State<UserSignup> {
                         },
                       ),
                       TextFormField(
+                        decoration: const InputDecoration(hintText: "Username"),
                         validator: (val) =>
                             (val!.length < 8 || val!.length > 21)
                                 ? "Enter a username 8 to 20 chars long"
@@ -53,6 +63,7 @@ class _UserSignupState extends State<UserSignup> {
                         },
                       ),
                       TextFormField(
+                        decoration: const InputDecoration(hintText: "Password"),
                         obscureText: true,
                         validator: (val) =>
                             (val!.length < 8 || val!.length > 21)
@@ -63,7 +74,11 @@ class _UserSignupState extends State<UserSignup> {
                         },
                       ),
                       ElevatedButton(
-                          child: const Text('SIgn up '),
+                          style: ElevatedButton.styleFrom(
+                            textStyle: TextStyle(fontSize: 20),
+                            minimumSize: Size.fromHeight(50),
+                          ),
+                          child: const Text('Sign Up'),
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               setState(() => loading = true);
@@ -73,6 +88,13 @@ class _UserSignupState extends State<UserSignup> {
                                 setState(() => error = 'error beb');
                                 loading = false;
                               } else {
+                                // ignore: use_build_context_synchronously
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const VerifyEmail()),
+                                );
                                 setState(() => error = '');
                                 loading = false;
                               }

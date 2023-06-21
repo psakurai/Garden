@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:garden/pages/deactivate.dart';
+import 'package:garden/pages/email_verify.dart';
 import 'package:garden/pages/sign_in.dart';
 import '../pages/admin.dart';
 import '../utils/styles.dart';
@@ -23,7 +25,12 @@ class _MyAppState extends State<AccessLevel> {
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
-        if (documentSnapshot.get('access_level') == 1) {
+        if (FirebaseAuth.instance.currentUser!.emailVerified == false) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const VerifyEmail()),
+          );
+        } else if (documentSnapshot.get('access_level') == 1) {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const BottomNav()),
@@ -32,6 +39,11 @@ class _MyAppState extends State<AccessLevel> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => Admin()),
+          );
+        } else if (documentSnapshot.get('access_level') == 69) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const Deactivated()),
           );
         }
       } else {

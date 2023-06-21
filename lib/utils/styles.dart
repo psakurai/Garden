@@ -10,7 +10,7 @@ var icon = const Color(0xFFB8BCCB);
 var background = const Color(0xFFF8FAFB);
 var white = const Color(0xFFFFFFFF);
 var black = const Color(0xFF000000);
-
+var hitampremium = const Color(0xff28292a);
 // TextStyles
 TextStyle heading1 = GoogleFonts.poppins(
     fontSize: 20, fontWeight: FontWeight.w600, color: heading);

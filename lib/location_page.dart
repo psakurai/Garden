@@ -1,9 +1,17 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:garden/models/user.dart';
+import 'package:garden/utils/styles.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 import 'dart:math';
+
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import 'package:garden/services/database.dart';
 
 class OrderTrackingPage extends StatefulWidget {
   const OrderTrackingPage({Key? key}) : super(key: key);
@@ -20,10 +28,14 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     accuracy: LocationAccuracy.high,
     distanceFilter: 1,
   );
+  String statusStartOrEnd = "Start";
+  int isRecord = 0;
+  double distance = 0.00;
+  double averagespeed = 0.00;
+  double totalspeed = 0.00;
   // BitmapDescriptor startIcon = BitmapDescriptor.defaultMarker;
   // BitmapDescriptor endIcon = BitmapDescriptor.defaultMarker;
   BitmapDescriptor currentLocationIcon = BitmapDescriptor.defaultMarker;
-  double totalDistance = 0;
   List<LatLng> polylineCoordinates = [];
   void getPolyPoints() async {
     PolylinePoints polylinePoints = PolylinePoints();
@@ -96,11 +108,23 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
           ),
         ),
       );
-      polylineCoordinates
-          .add(LatLng(newlocation.latitude, newlocation.longitude));
+      if (isRecord == 1) {
+        //prevpolylineCoordinates.clear();
+        polylineCoordinates
+            .add(LatLng(newlocation.latitude, newlocation.longitude));
+
+        start(newlocation.speed * 3.6);
+      } else if (isRecord == 2) {
+        //prevpolylineCoordinates = polylineCoordinates;
+
+        end();
+        polylineCoordinates.clear();
+        isRecord = 0;
+      }
       setState(() {
         _currentLocation = newlocation;
       });
+
       // print(position == null ? 'Unknown' : '${position.latitude.toString()}, ${position.longitude.toString()}');
     });
   }
@@ -137,7 +161,8 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     return 12742 * asin(sqrt(a));
   }
 
-  void end() {
+  Future<void> start(double speed) async {
+    double totalDistance = 0;
     for (var i = 0; i < polylineCoordinates.length - 1; i++) {
       totalDistance += calculateDistance(
           polylineCoordinates[i].latitude,
@@ -145,7 +170,35 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
           polylineCoordinates[i + 1].latitude,
           polylineCoordinates[i + 1].longitude);
     }
-    print(totalDistance);
+    distance = totalDistance;
+    totalspeed += speed;
+    averagespeed = totalspeed / distance;
+  }
+
+  Future<void> end() async {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    var userFirebase = _auth.currentUser;
+    if (distance != 0) {
+      await DatabaseService(uid: userFirebase!.uid)
+          .updateDistanceData(distance, averagespeed);
+
+      await DatabaseService(uid: userFirebase.uid)
+          .updateDistanceHistoryData(distance, averagespeed);
+
+      await DatabaseService(uid: userFirebase.uid).updateGoldData(distance);
+
+      await DatabaseService(uid: userFirebase.uid).updateLevelData();
+    }
+  }
+
+  Future<void> startPolylineCoordinates() async {
+    if (statusStartOrEnd == "Start") {
+      setState(() => isRecord = 1);
+      statusStartOrEnd = "End";
+    } else {
+      setState(() => isRecord = 2);
+      statusStartOrEnd = "Start";
+    }
   }
 
   @override
@@ -160,40 +213,77 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     return Scaffold(
       body: _currentLocation == null
           ? const Center(child: Text("Loading"))
-          : GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: LatLng(
-                    _currentLocation!.latitude!, _currentLocation!.longitude!),
-                zoom: 20,
+          : Stack(children: <Widget>[
+              GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(_currentLocation!.latitude!,
+                      _currentLocation!.longitude!),
+                  zoom: 20,
+                ),
+                markers: {
+                  Marker(
+                    markerId: const MarkerId("currentLocation"),
+                    position: LatLng(_currentLocation!.latitude,
+                        _currentLocation!.longitude),
+                    icon: currentLocationIcon,
+                  ),
+                  const Marker(
+                    markerId: MarkerId("source"),
+                    position: sourceLocation,
+                  ),
+                  const Marker(
+                    markerId: MarkerId("destination"),
+                    position: destination,
+                  ),
+                },
+                onMapCreated: (mapController) {
+                  _controller.complete(mapController);
+                },
+                polylines: {
+                  Polyline(
+                    polylineId: const PolylineId("route"),
+                    points: polylineCoordinates,
+                    color: const Color(0xFF7B61FF),
+                    width: 6,
+                  ),
+                },
               ),
-              markers: {
-                Marker(
-                  markerId: const MarkerId("currentLocation"),
-                  position: LatLng(
-                      _currentLocation!.latitude, _currentLocation!.longitude),
-                  icon: currentLocationIcon,
+              SlidingUpPanel(
+                panel: Container(
+                  width: 100,
+                  height: 100,
+                  color: Colors.red,
+                  padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+                  child: Column(
+                    children: <Widget>[
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            textStyle: TextStyle(fontSize: heading3.fontSize),
+                            minimumSize: Size.fromHeight(50),
+                            backgroundColor: Colors.green,
+                          ),
+                          child: Text(statusStartOrEnd),
+                          onPressed: () async {
+                            startPolylineCoordinates();
+                          }),
+                    ],
+
+                    // child: ElevatedButton(
+                    //     child: Text(statusStartOrEnd),
+                    //     onPressed: () async {
+                    //       startPolylineCoordinates();
+                    //     }),
+                  ),
                 ),
-                const Marker(
-                  markerId: MarkerId("source"),
-                  position: sourceLocation,
-                ),
-                const Marker(
-                  markerId: MarkerId("destination"),
-                  position: destination,
-                ),
-              },
-              onMapCreated: (mapController) {
-                _controller.complete(mapController);
-              },
-              polylines: {
-                Polyline(
-                  polylineId: const PolylineId("route"),
-                  points: polylineCoordinates,
-                  color: const Color(0xFF7B61FF),
-                  width: 6,
-                ),
-              },
-            ),
+              ),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    textStyle: TextStyle(fontSize: 20),
+                    minimumSize: const Size.fromHeight(50),
+                  ),
+                  child: Text("${distance.toStringAsFixed(3)} KM"),
+                  onPressed: () async {}),
+            ]),
     );
   }
 }
