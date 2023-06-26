@@ -11,7 +11,9 @@ class Ranking extends StatefulWidget {
 }
 
 class RankingState extends State<Ranking> {
-  final ref = FirebaseFirestore.instance.collection("totaldistance");
+  final ref = FirebaseFirestore.instance
+      .collection("totaldistance")
+      .orderBy('distance', descending: true);
   Color? colorstatus;
   String currentUsername = "";
 
