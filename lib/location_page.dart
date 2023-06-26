@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -33,6 +34,8 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
   double distance = 0.00;
   double averagespeed = 0.00;
   double totalspeed = 0.00;
+  String username = "";
+  Color whichColor = Colors.teal;
   // BitmapDescriptor startIcon = BitmapDescriptor.defaultMarker;
   // BitmapDescriptor endIcon = BitmapDescriptor.defaultMarker;
   BitmapDescriptor currentLocationIcon = BitmapDescriptor.defaultMarker;
@@ -179,15 +182,25 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     final FirebaseAuth _auth = FirebaseAuth.instance;
     var userFirebase = _auth.currentUser;
     if (distance != 0) {
-      await DatabaseService(uid: userFirebase!.uid)
-          .updateDistanceData(distance, averagespeed);
+      var kk = FirebaseFirestore.instance
+          .collection('user')
+          .doc(userFirebase!.uid)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) async {
+        if (documentSnapshot.exists) {
+          username = documentSnapshot.get('username').toString();
 
-      await DatabaseService(uid: userFirebase.uid)
-          .updateDistanceHistoryData(distance, averagespeed);
+          await DatabaseService(uid: userFirebase!.uid)
+              .updateDistanceData(distance, averagespeed, username);
 
-      await DatabaseService(uid: userFirebase.uid).updateGoldData(distance);
+          await DatabaseService(uid: userFirebase.uid)
+              .updateDistanceHistoryData(distance, averagespeed);
 
-      await DatabaseService(uid: userFirebase.uid).updateLevelData();
+          await DatabaseService(uid: userFirebase.uid).updateGoldData(distance);
+
+          await DatabaseService(uid: userFirebase.uid).updateLevelData();
+        }
+      });
     }
   }
 
@@ -195,9 +208,11 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     if (statusStartOrEnd == "Start") {
       setState(() => isRecord = 1);
       statusStartOrEnd = "End";
+      whichColor = Colors.red;
     } else {
       setState(() => isRecord = 2);
       statusStartOrEnd = "Start";
+      whichColor = Colors.teal;
     }
   }
 
@@ -243,24 +258,30 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
                   Polyline(
                     polylineId: const PolylineId("route"),
                     points: polylineCoordinates,
-                    color: const Color(0xFF7B61FF),
+                    color: Colors.teal,
                     width: 6,
                   ),
                 },
               ),
               SlidingUpPanel(
+                maxHeight: 100,
                 panel: Container(
                   width: 100,
                   height: 100,
-                  color: Colors.red,
+                  color: Colors.teal[400],
                   padding: EdgeInsets.only(left: 20, right: 20, top: 10),
                   child: Column(
                     children: <Widget>[
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            textStyle: TextStyle(fontSize: heading3.fontSize),
+                            textStyle: TextStyle(fontSize: 20),
                             minimumSize: Size.fromHeight(50),
-                            backgroundColor: Colors.green,
+                            primary: whichColor, //Colors.teal,
+                            onPrimary: Colors.white,
+                            elevation: 10,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                           child: Text(statusStartOrEnd),
                           onPressed: () async {

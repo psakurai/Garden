@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:garden/components/header_widget.dart';
 import 'package:garden/pages/sign_in.dart';
 import 'package:garden/services/access_level.dart';
 import 'package:garden/utils/styles.dart';
+import 'package:garden/utils/theme_helper.dart';
 
 import '../services/auth.dart';
 
@@ -60,10 +62,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
       : Scaffold(
           appBar: AppBar(
             centerTitle: true,
-            // title: const Text(
-            //   'Navigation Drawer',
-            // ),
-            // backgroundColor: const Color(0xff764abc),
+            elevation: 0.0,
             automaticallyImplyLeading: false,
           ),
           endDrawer: Drawer(
@@ -73,7 +72,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
               // padding: EdgeInsets.zero,
               children: [
                 ListTile(
-                  leading: const Icon(Icons.logout),
+                  leading: const Icon(Icons.delete_forever),
                   title: const Text('Delete Account'),
                   onTap: () async {
                     //Navigator.pop(context);
@@ -109,7 +108,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
               children: [
                 SizedBox(
                   height: headerHeight,
-                  //child: HeaderWidget(headerHeight, true, Icons.email),
+                  child: HeaderWidget(headerHeight, true, Icons.email_rounded),
                 ),
                 SafeArea(
                   child: Container(
@@ -151,29 +150,35 @@ class _VerifyEmailState extends State<VerifyEmail> {
                           key: _formKey,
                           child: Column(
                             children: <Widget>[
-                              ElevatedButton(
-                                //style: ThemeHelper().buttonStyle(),
-                                onPressed: canResendEmail
-                                    ? () async {
-                                        if (_formKey.currentState!.validate()) {
-                                          _auth.sendVerificationEmail();
-                                          setState(
-                                              () => canResendEmail = false);
-                                          await Future.delayed(
-                                              const Duration(seconds: 60));
-                                          setState(() => canResendEmail = true);
+                              Container(
+                                decoration:
+                                    ThemeHelper().buttonBoxDecoration(context),
+                                child: ElevatedButton(
+                                  style: ThemeHelper().buttonStyle(),
+                                  onPressed: canResendEmail
+                                      ? () async {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            _auth.sendVerificationEmail();
+                                            setState(
+                                                () => canResendEmail = false);
+                                            await Future.delayed(
+                                                const Duration(seconds: 60));
+                                            setState(
+                                                () => canResendEmail = true);
+                                          }
                                         }
-                                      }
-                                    : null,
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(40, 10, 40, 10),
-                                  child: Text(
-                                    "Send".toUpperCase(),
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                      : null,
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        40, 10, 40, 10),
+                                    child: Text(
+                                      "Send".toUpperCase(),
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
                                 ),

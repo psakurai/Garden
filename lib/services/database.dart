@@ -65,7 +65,8 @@ class DatabaseService {
   Future deleteUsernamePlayerData(String email) async {}
 
   // total distance
-  Future<void> updateDistanceData(double distance, double speed) async {
+  Future<void> updateDistanceData(
+      double distance, double speed, String username) async {
     double currentDistance = 0.0;
     double pace = 0.0;
     User? userFirebase = FirebaseAuth.instance.currentUser;
@@ -83,12 +84,14 @@ class DatabaseService {
           'distance': distance,
           'speed': speed,
           'pace': pace,
+          'username': username,
         });
       } else {
         await gardenCollectionTotalDistance.doc(userFirebase.uid).set({
           'distance': distance,
           'speed': speed,
           'pace': pace,
+          'username': username,
         });
       }
     });
@@ -201,26 +204,31 @@ class DatabaseService {
       if (documentSnapshot.exists) {
         String expertiseName =
             documentSnapshot.get('expertise_name').toString();
-        if (expertiseName == "beginner") {
-          missionDistance = 3;
-          missionName = "Complete $missionDistance KM";
-          missionDescription = "Player has complete $missionDistance KM.";
-        }
-        if (expertiseName == "intermediate") {
-          missionDistance = 5;
-          missionName = "Complete $missionDistance KM";
-          missionDescription = "Player has complete $missionDistance KM.";
-        }
-        if (expertiseName == "expert") {
-          missionDistance = 8;
-          missionName = "Complete $missionDistance KM";
-          missionDescription = "Player has complete $missionDistance KM.";
-        }
+
         for (int i = 0; i < 3; i++) {
-          gardenCollectionMission.doc(uid + i.toString()).set({
+          if (expertiseName == "beginner") {
+            missionDistance = 3;
+            missionName = "Complete $missionDistance KM";
+            missionDescription = "Player has complete $missionDistance KM.";
+          }
+          if (expertiseName == "intermediate") {
+            missionDistance = 5;
+            missionName = "Complete $missionDistance KM";
+            missionDescription = "Player has complete $missionDistance KM.";
+          }
+          if (expertiseName == "expert") {
+            missionDistance = 8;
+            missionName = "Complete $missionDistance KM";
+            missionDescription = "Player has complete $missionDistance KM.";
+          }
+          gardenCollectionMission
+              .doc(uid)
+              .collection('whichmission')
+              .doc(uid + i.toString())
+              .set({
             'mission_name': missionName,
             'mission_description': missionDescription,
-            'mission_distance': missionDistance,
+            'mission_distance': missionDistance + i,
             'mission_status': missionStatus,
           });
         }
@@ -271,7 +279,11 @@ class DatabaseService {
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
-        gardenCollectionMission.doc(uid + missionID.toString()).update({
+        gardenCollectionMission
+            .doc(uid)
+            .collection('whichmission')
+            .doc(uid + missionID.toString())
+            .update({
           'mission_status': pass,
         });
       }

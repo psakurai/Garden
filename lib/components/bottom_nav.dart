@@ -55,7 +55,7 @@ class _MyAppState extends State<BottomNav> {
                   child: BottomNavigationBar(
                     currentIndex: selectedIndex,
                     onTap: onItemTapped,
-                    selectedItemColor: accent,
+                    selectedItemColor: Colors.teal,
                     unselectedItemColor: icon,
                     backgroundColor: const Color(0xff28292a),
                     elevation: 0,

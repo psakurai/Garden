@@ -36,9 +36,8 @@ List<SliderModel> getSlides() {
 
   //1
   sliderModel.setDesc(
-      "We’re here to disrupt the way Islam\nis currently taught, offering an unparalleled Madrasah combining modern teaching standards with traditional Islamic studies.");
-  sliderModel
-      .setTitle("Madarsah is now\nconvenient, modernized,\nand evolved.");
+      "We’re here to disrupt the way you\n currently jogged, offering an unparalleled services combining modern standards with spectacular experiences.");
+  sliderModel.setTitle("Garden is now\nconvenient, modernized,\nand evolved.");
   sliderModel.setImageAssetPath("assets/images/onb1.png");
   slides.add(sliderModel);
 

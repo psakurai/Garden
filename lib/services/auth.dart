@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' as Foundation;
+import 'package:flutter/material.dart';
 import 'package:garden/services/database.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../models/user.dart';
 
@@ -51,8 +53,8 @@ class AuthService {
   }
 
   // register email pass
-  Future signUpEmailPassword(
-      String email, String username, String password) async {
+  Future signUpEmailPassword(String email, String username, String password,
+      String _selectedExpertise) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -61,8 +63,8 @@ class AuthService {
       // int role = 1;
       // CollectionReference ref = FirebaseFirestore.instance.collection('users');
       // ref.doc(userFirebase!.uid).set({'email': email, 'role': role});
-      await DatabaseService(uid: user!.uid)
-          .updateUserData(email, username, password, 'beginner', 1);
+      await DatabaseService(uid: user!.uid).updateUserData(
+          email, username, password, _selectedExpertise.toLowerCase(), 1);
       await DatabaseService(uid: user.uid).updateEmailPlayerData(email);
       await DatabaseService(uid: user.uid)
           .updateUsernamePlayerData(username, email);
@@ -115,10 +117,37 @@ class AuthService {
     }
   }
 
+  Future resetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      Fluttertoast.showToast(
+          msg: "Email sent successfully",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          fontSize: 20.0,
+          backgroundColor: Colors.green.withOpacity(0.8),
+          textColor: Colors.white);
+    } on FirebaseAuthException catch (e) {
+      Fluttertoast.showToast(
+          msg: e.toString(),
+          fontSize: 20.0,
+          backgroundColor: Colors.redAccent.withOpacity(0.8),
+          textColor: Colors.white);
+    }
+  }
+
   Future<void> deleteAccount() async {
     try {
       User? userFirebase = FirebaseAuth.instance.currentUser;
       userFirebase!.delete();
+
+      Fluttertoast.showToast(
+          msg: "Account deleted successfully",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          fontSize: 20.0,
+          backgroundColor: Colors.green.withOpacity(0.8),
+          textColor: Colors.white);
     } catch (e) {
       print(e.toString());
     }
@@ -127,17 +156,43 @@ class AuthService {
   Future<void> deactivateAccountUsername(username) async {
     try {
       var playerUID = "";
+      var accessLevel = "";
       var kk = FirebaseFirestore.instance
           .collection('usernamePlayer')
           .doc(username)
           .get()
           .then((DocumentSnapshot documentSnapshot) async {
         playerUID = documentSnapshot.get('uid').toString();
-        await FirebaseFirestore.instance
+        FirebaseFirestore.instance
             .collection('user')
             .doc(playerUID)
-            .update({
-          'access_level': 69,
+            .get()
+            .then((DocumentSnapshot documentSnapshot) async {
+          accessLevel = documentSnapshot.get('access_level').toString();
+          if (accessLevel != "0") {
+            await FirebaseFirestore.instance
+                .collection('user')
+                .doc(playerUID)
+                .update({
+              'access_level': 69,
+            });
+
+            Fluttertoast.showToast(
+                msg: "Account deactivated successfully",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                fontSize: 20.0,
+                backgroundColor: Colors.green.withOpacity(0.8),
+                textColor: Colors.white);
+          } else {
+            Fluttertoast.showToast(
+                msg: "Admin account cannot be deactivated",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                fontSize: 20.0,
+                backgroundColor: Colors.green.withOpacity(0.8),
+                textColor: Colors.white);
+          }
         });
       });
     } catch (e) {
@@ -147,6 +202,7 @@ class AuthService {
 
   Future<void> reactivateAccountUsername(username) async {
     try {
+      var accessLevel = "";
       var playerUID = "";
       var kk = FirebaseFirestore.instance
           .collection('usernamePlayer')
@@ -154,11 +210,37 @@ class AuthService {
           .get()
           .then((DocumentSnapshot documentSnapshot) async {
         playerUID = documentSnapshot.get('uid').toString();
-        await FirebaseFirestore.instance
+
+        FirebaseFirestore.instance
             .collection('user')
             .doc(playerUID)
-            .update({
-          'access_level': 1,
+            .get()
+            .then((DocumentSnapshot documentSnapshot) async {
+          accessLevel = documentSnapshot.get('access_level').toString();
+          if (accessLevel != "0") {
+            await FirebaseFirestore.instance
+                .collection('user')
+                .doc(playerUID)
+                .update({
+              'access_level': 1,
+            });
+
+            Fluttertoast.showToast(
+                msg: "Account reactivated successfully",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                fontSize: 20.0,
+                backgroundColor: Colors.green.withOpacity(0.8),
+                textColor: Colors.white);
+          } else {
+            Fluttertoast.showToast(
+                msg: "Admin account cannot be reactivated",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                fontSize: 20.0,
+                backgroundColor: Colors.green.withOpacity(0.8),
+                textColor: Colors.white);
+          }
         });
       });
     } catch (e) {
@@ -169,6 +251,7 @@ class AuthService {
 //emailPlayer
   Future<void> deactivateAccountEmail(email) async {
     try {
+      var accessLevel = "";
       var playerUID = "";
       var kk = FirebaseFirestore.instance
           .collection('emailPlayer')
@@ -176,11 +259,36 @@ class AuthService {
           .get()
           .then((DocumentSnapshot documentSnapshot) async {
         playerUID = documentSnapshot.get('uid').toString();
-        await FirebaseFirestore.instance
+        FirebaseFirestore.instance
             .collection('user')
             .doc(playerUID)
-            .update({
-          'access_level': 69,
+            .get()
+            .then((DocumentSnapshot documentSnapshot) async {
+          accessLevel = documentSnapshot.get('access_level').toString();
+          if (accessLevel != "0") {
+            await FirebaseFirestore.instance
+                .collection('user')
+                .doc(playerUID)
+                .update({
+              'access_level': 69,
+            });
+
+            Fluttertoast.showToast(
+                msg: "Account deactivated successfully",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                fontSize: 20.0,
+                backgroundColor: Colors.green.withOpacity(0.8),
+                textColor: Colors.white);
+          } else {
+            Fluttertoast.showToast(
+                msg: "Admin account cannot be deactivated",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                fontSize: 20.0,
+                backgroundColor: Colors.green.withOpacity(0.8),
+                textColor: Colors.white);
+          }
         });
       });
     } catch (e) {
@@ -190,6 +298,7 @@ class AuthService {
 
   Future<void> reactivateAccountEmail(email) async {
     try {
+      var accessLevel = "";
       var playerUID = "";
       var kk = FirebaseFirestore.instance
           .collection('emailPlayer')
@@ -197,11 +306,37 @@ class AuthService {
           .get()
           .then((DocumentSnapshot documentSnapshot) async {
         playerUID = documentSnapshot.get('uid').toString();
-        await FirebaseFirestore.instance
+
+        FirebaseFirestore.instance
             .collection('user')
             .doc(playerUID)
-            .update({
-          'access_level': 1,
+            .get()
+            .then((DocumentSnapshot documentSnapshot) async {
+          accessLevel = documentSnapshot.get('access_level').toString();
+          if (accessLevel != "0") {
+            await FirebaseFirestore.instance
+                .collection('user')
+                .doc(playerUID)
+                .update({
+              'access_level': 1,
+            });
+
+            Fluttertoast.showToast(
+                msg: "Account reactivated successfully",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                fontSize: 20.0,
+                backgroundColor: Colors.green.withOpacity(0.8),
+                textColor: Colors.white);
+          } else {
+            Fluttertoast.showToast(
+                msg: "Admin account cannot be reactivated",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                fontSize: 20.0,
+                backgroundColor: Colors.green.withOpacity(0.8),
+                textColor: Colors.white);
+          }
         });
       });
     } catch (e) {
@@ -211,6 +346,7 @@ class AuthService {
 
   Future<void> deleteEmailPlayer(String email) async {
     try {
+      var accessLevel = "";
       var playerUID = "";
       var password = "";
       var kk = FirebaseFirestore.instance
@@ -225,14 +361,31 @@ class AuthService {
             .get()
             .then((DocumentSnapshot documentSnapshot2) async {
           password = documentSnapshot2.get('password').toString();
-
-          UserCredential result = await _auth.signInWithEmailAndPassword(
-              email: email, password: password);
-          User? userFirebase = result.user;
-          userFirebase!.delete();
-          await signOut();
-          await signInEmailPassword(
-              "arifamiruddin@graduate.utm.my", "password");
+          accessLevel = documentSnapshot2.get('access_level').toString();
+          if (accessLevel != "0") {
+            UserCredential result = await _auth.signInWithEmailAndPassword(
+                email: email, password: password);
+            User? userFirebase = result.user;
+            userFirebase!.delete();
+            await signOut();
+            await signInEmailPassword(
+                "arifamiruddin@graduate.utm.my", "Hololo122");
+            Fluttertoast.showToast(
+                msg: "Account deleted successfully",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                fontSize: 20.0,
+                backgroundColor: Colors.green.withOpacity(0.8),
+                textColor: Colors.white);
+          } else {
+            Fluttertoast.showToast(
+                msg: "Admin account cannot be deleted",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                fontSize: 20.0,
+                backgroundColor: Colors.green.withOpacity(0.8),
+                textColor: Colors.white);
+          }
         });
       });
     } catch (e) {
@@ -242,6 +395,7 @@ class AuthService {
 
   Future<void> deleteUsernamePlayer(String username) async {
     try {
+      var accessLevel = "";
       var playerUID = "";
       var password = "";
       var email = "";
@@ -258,14 +412,32 @@ class AuthService {
             .get()
             .then((DocumentSnapshot documentSnapshot2) async {
           password = documentSnapshot2.get('password').toString();
+          accessLevel = documentSnapshot2.get('access_level').toString();
+          if (accessLevel != "0") {
+            UserCredential result = await _auth.signInWithEmailAndPassword(
+                email: email, password: password);
+            User? userFirebase = result.user;
+            userFirebase!.delete();
+            await signOut();
+            await signInEmailPassword(
+                "arifamiruddin@graduate.utm.my", "password");
 
-          UserCredential result = await _auth.signInWithEmailAndPassword(
-              email: email, password: password);
-          User? userFirebase = result.user;
-          userFirebase!.delete();
-          await signOut();
-          await signInEmailPassword(
-              "arifamiruddin@graduate.utm.my", "password");
+            Fluttertoast.showToast(
+                msg: "Account deleted successfully",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                fontSize: 20.0,
+                backgroundColor: Colors.green.withOpacity(0.8),
+                textColor: Colors.white);
+          } else {
+            Fluttertoast.showToast(
+                msg: "Admin account cannot be deleted",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                fontSize: 20.0,
+                backgroundColor: Colors.green.withOpacity(0.8),
+                textColor: Colors.white);
+          }
         });
       });
     } catch (e) {
@@ -277,6 +449,13 @@ class AuthService {
     try {
       final user = FirebaseAuth.instance.currentUser!;
       await user.sendEmailVerification();
+      Fluttertoast.showToast(
+          msg: "Email sent successfully",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          fontSize: 20.0,
+          backgroundColor: Colors.green.withOpacity(0.8),
+          textColor: Colors.white);
     } catch (e) {
       print(e.toString());
     }
@@ -285,8 +464,16 @@ class AuthService {
   Future<void> addDistance(double distance, double speed) async {
     try {
       var userFirebase = _auth.currentUser;
-      await DatabaseService(uid: userFirebase!.uid)
-          .updateDistanceData(distance, speed);
+      var kk = FirebaseFirestore.instance
+          .collection('user')
+          .doc(userFirebase!.uid)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) async {
+        String username = documentSnapshot.get('username').toString();
+
+        await DatabaseService(uid: userFirebase!.uid)
+            .updateDistanceData(distance, speed, username);
+      });
     } catch (e) {
       print(e.toString());
     }
@@ -295,9 +482,53 @@ class AuthService {
   void addPlayerAccount(String email, String username, String password) async {
     try {
       _auth.createUserWithEmailAndPassword(email: email, password: password);
+      Fluttertoast.showToast(
+          msg: "Account added successfully",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          fontSize: 20.0,
+          backgroundColor: Colors.green.withOpacity(0.8),
+          textColor: Colors.white);
     } catch (e) {
       print(e.toString());
       return null;
+    }
+  }
+
+  Future<void> updatePlayerUsername(String email, String username) async {
+    try {
+      var playerUID = "";
+      var kk = FirebaseFirestore.instance
+          .collection('emailPlayer')
+          .doc(email)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) async {
+        playerUID = documentSnapshot.get('uid').toString();
+        await FirebaseFirestore.instance
+            .collection('user')
+            .doc(playerUID)
+            .update({
+          'username': username,
+        });
+
+        await FirebaseFirestore.instance
+            .collection('usernamePlayer')
+            .doc(username)
+            .set({
+          'uid': playerUID,
+          'email': email,
+        });
+
+        Fluttertoast.showToast(
+            msg: "Username updated successfully",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            fontSize: 20.0,
+            backgroundColor: Colors.green.withOpacity(0.8),
+            textColor: Colors.white);
+      });
+    } catch (e) {
+      print(e.toString());
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:garden/components/header_widget.dart';
 import 'package:garden/pages/ranking.dart';
 import 'package:garden/pages/sign_in.dart';
 import 'package:garden/utils/styles.dart';
@@ -78,7 +79,16 @@ class _DistanceState extends State<Distance> {
   }
 
   Widget build(BuildContext context) {
+    double headerHeight = 150;
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.teal,
+          elevation: 0.0,
+          title: const Text('Distance History'),
+          centerTitle: true,
+          automaticallyImplyLeading: false,
+          actionsIconTheme: const IconThemeData(color: Colors.white, size: 25),
+        ),
         body: isExist == null
             ? const Center(child: Text("Loading"))
             : SafeArea(
@@ -86,16 +96,36 @@ class _DistanceState extends State<Distance> {
                   padding: const EdgeInsets.only(),
                   child: Column(
                     children: <Widget>[
+                      SizedBox(
+                        height: headerHeight,
+                        child: HeaderWidget(
+                            headerHeight, false, Icons.password_rounded),
+                      ),
                       Padding(
                         padding:
-                            const EdgeInsets.only(left: 20, right: 20, top: 10),
+                            const EdgeInsets.only(left: 16, right: 16, top: 10),
                         child: Column(
                           children: <Widget>[
-                            const Text("Current Ranking: "),
+                            const Text(
+                              "Current Ranking: ",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                //backgroundColor: Colors.green,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   textStyle: TextStyle(fontSize: 20),
                                   minimumSize: Size.fromHeight(50),
+                                  primary: Colors.teal,
+                                  onPrimary: Colors.white,
+                                  elevation: 10,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
                                 ),
                                 child: const Text('See all ranking.'),
                                 onPressed: () {
@@ -106,9 +136,15 @@ class _DistanceState extends State<Distance> {
                                   );
                                 }),
                             const SizedBox(
-                              height: 20,
+                              height: 10,
                             ),
-                            const Text("Distance History"),
+                            const Text(
+                              "Distance History",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                //backgroundColor: Colors.green,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -116,48 +152,61 @@ class _DistanceState extends State<Distance> {
                         child: ListView.separated(
                           itemBuilder: (context, position) {
                             // return Card(
+                            //   color: Colors.grey,
                             //   child: Padding(
                             //     padding: const EdgeInsets.all(8.0),
-                            //     child: Text(
-                            //       'Distance: ${distance[position]} KM',
-                            //       textAlign: TextAlign.left,
-                            //       style: const TextStyle(
-                            //         fontSize: 20,
-                            //         fontWeight: FontWeight.bold,
-                            //         //backgroundColor: Colors.green,
+                            //     child: Container(
+                            //       child: Column(
+                            //         children: [
+                            //           Text(
+                            //             'Distance: ${distance[position]} KM',
+                            //             style: const TextStyle(
+                            //                 fontSize: 20,
+                            //                 fontWeight: FontWeight.normal),
+                            //           ),
+                            //         ],
                             //       ),
                             //     ),
                             //   ),
                             // );
-                            return Card(
-                              color: Colors.grey,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Container(
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        'Distance: ${distance[position]} KM',
-                                        style: const TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.normal),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
+                            if (double.parse(distance[position]) > 10.0) {
+                              return ListTile(
+                                leading: const Icon(Icons.directions_run,
+                                    color: Colors.green, size: 25),
+                                title:
+                                    Text('Distance: ${distance[position]} KM'),
+                                subtitle:
+                                    const Text('What an amazing athlete!'),
+                              );
+                            } else if (double.parse(distance[position]) > 5.0) {
+                              return ListTile(
+                                leading: const Icon(Icons.directions_run,
+                                    color: Colors.green, size: 25),
+                                title:
+                                    Text('Distance: ${distance[position]} KM'),
+                                subtitle: const Text('Amazing achievement!'),
+                              );
+                            } else if (double.parse(distance[position]) > 3.0) {
+                              return ListTile(
+                                leading: const Icon(Icons.directions_run,
+                                    color: Colors.green, size: 25),
+                                title:
+                                    Text('Distance: ${distance[position]} KM'),
+                                subtitle: const Text('You are doing great!'),
+                              );
+                            } else {
+                              return ListTile(
+                                leading: const Icon(Icons.directions_run,
+                                    color: Colors.green, size: 25),
+                                title:
+                                    Text('Distance: ${distance[position]} KM'),
+                                subtitle: const Text('Thats a good start!'),
+                              );
+                            }
                           },
                           separatorBuilder: (context, position) {
-                            return const Card(
-                              color: Colors.grey,
-                              child: Padding(
-                                padding: EdgeInsets.all(5.0),
-                                child: Text(
-                                  '',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
+                            return const SizedBox(
+                              height: 10,
                             );
                           },
                           itemCount: distance.length,

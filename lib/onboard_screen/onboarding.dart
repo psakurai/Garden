@@ -229,7 +229,7 @@ class SlideTile extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w800,
                 fontSize: 18.sp,
-                color: const Color(0xff28292a),
+                color: Color.fromARGB(255, 11, 33, 54),
               ),
             ),
           ),

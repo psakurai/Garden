@@ -68,15 +68,7 @@ class RankingState extends State<Ranking> {
                             child: Column(
                               children: [
                                 // Image.network(snapshot.data!.docs[index]['image']),
-                                Text(
-                                  (index + 1).toString(),
-                                  textAlign: TextAlign.left,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    //backgroundColor: Colors.green,
-                                  ),
-                                ),
+
                                 Text(
                                   snapshot.data!.docs[index]['distance']
                                           .toStringAsFixed(3) +
@@ -88,7 +80,9 @@ class RankingState extends State<Ranking> {
                                 const SizedBox(
                                   height: 20,
                                 ),
-                                Text(snapshot.data!.docs[index]['username']),
+                                // ignore: prefer_interpolation_to_compose_strings
+                                Text('Player: ' +
+                                    snapshot.data!.docs[index]['username']),
                               ],
                             ),
                           ),
@@ -100,44 +94,6 @@ class RankingState extends State<Ranking> {
               return const CircularProgressIndicator();
             }
           }),
-
-      // StreamBuilder(
-      //     stream: FirebaseFirestore.instance
-      //         .collection('distanceHistory')
-      //         .snapshots(),
-      //     builder:
-      //         (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-      //       if (!snapshot.hasData) {
-      //         return const Center(
-      //           child: CircularProgressIndicator(),
-      //         );
-      //       }
-
-      //       return ListView(
-      //         children: snapshot.data.documents.map((document) {
-      //           var url = document['url'];
-
-      //           return Center(
-      //             child: Container(
-      //               width: MediaQuery.of(context).size.width / 1.2,
-      //               child: Column(
-      //                 children: <Widget>[
-      //                   Padding(
-      //                     padding: EdgeInsets.only(
-      //                       top: 20,
-      //                       bottom: 5,
-      //                     ),
-      //                     child: Text(document['distance'],
-      //                         style: GoogleFonts.quicksand(
-      //                             fontStyle: FontStyle.normal)),
-      //                   ),
-      //                 ],
-      //               ),
-      //             ),
-      //           );
-      //         }).toList(),
-      //       );
-      //     }),
     );
   }
 }
