@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:garden/utils/styles.dart';
+import 'package:garden/components/imagedialog.dart';
 
 class PlayerGarden extends StatefulWidget {
   const PlayerGarden({super.key});
@@ -17,6 +18,7 @@ class PlayerGardenState extends State<PlayerGarden> {
   List<String> seedName = [];
   List<String> seedPrice = [];
   List<String> seedStatus = [];
+  List<String> image = [];
 
   Future<void> getSeedData() async {
     seedName.clear();
@@ -47,6 +49,12 @@ class PlayerGardenState extends State<PlayerGarden> {
     CollectionReference<Map<String, dynamic>>;
   }
 
+  Future<void> _getImageUrls() async {
+    for (int i = 0; i < 2; i++) {
+      image.add('assets/images/S' + i.toString() + '.png');
+    }
+  }
+
   late CollectionReference<Map<String, dynamic>> ref;
   @override
   void initState() {
@@ -56,7 +64,9 @@ class PlayerGardenState extends State<PlayerGarden> {
         .collection('seed')
         .doc(userFirebase!.uid)
         .collection('whichseed');
+
     getSeedData();
+    _getImageUrls();
     super.initState();
   }
 
@@ -93,7 +103,14 @@ class PlayerGardenState extends State<PlayerGarden> {
                             ),
                           ),
                           child: Text('View Seed'),
-                          onPressed: () {},
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (_) =>
+                                    // ignore: prefer_interpolation_to_compose_strings
+                                    //ImageDialog(images[index]))
+                                    ImageDialog(image[index]));
+                          },
                         ),
                         tileColor: Colors.green[100],
                       );

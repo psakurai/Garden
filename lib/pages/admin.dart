@@ -226,7 +226,7 @@ class _AdminState extends State<Admin> {
                             child: const Text('Delete Player'),
                             onPressed: () async {
                               if (username.isNotEmpty) {
-                                await _auth.deactivateAccountUsername(username);
+                                await _auth.deleteUsernamePlayer(username);
                               } else if (email.isNotEmpty) {
                                 await _auth.deleteEmailPlayer(email);
                               }

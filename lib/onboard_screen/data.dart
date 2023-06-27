@@ -45,18 +45,18 @@ List<SliderModel> getSlides() {
 
   //2
   sliderModel.setDesc(
-      "Now communication with your instructor\nhas improved like never before. Receive daily reminders so you never miss a Zoom session!");
-  sliderModel.setTitle("An app that is\nenabling students around\nthe globe!");
-  sliderModel.setImageAssetPath("assets/images/onb2.png");
+      "Now compete with other player.\n Receive golds and up your level!");
+  sliderModel.setTitle("An app that is\nenabling students around\nUTM!");
+  sliderModel.setImageAssetPath("assets/images/onb1.png");
   slides.add(sliderModel);
 
   sliderModel = SliderModel();
 
   //3
   sliderModel.setDesc(
-      "Now communication with your instructor\nhas improved like never . Receive daily reminders so you never miss a Zoom session!");
-  sliderModel.setTitle("An app that is\nenabling students around\nthe globe!");
-  sliderModel.setImageAssetPath("assets/images/onb3.png");
+      "Now collect unique plants,\n badges and complete all missions!");
+  sliderModel.setTitle("An app that is\nenabling students around\nUTM!");
+  sliderModel.setImageAssetPath("assets/images/onb1.png");
   slides.add(sliderModel);
 
   sliderModel = SliderModel();

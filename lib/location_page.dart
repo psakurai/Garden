@@ -301,6 +301,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
                   style: ElevatedButton.styleFrom(
                     textStyle: TextStyle(fontSize: 20),
                     minimumSize: const Size.fromHeight(50),
+                    padding: EdgeInsets.only(top: 20),
                   ),
                   child: Text("${distance.toStringAsFixed(3)} KM"),
                   onPressed: () async {}),

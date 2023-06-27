@@ -20,7 +20,7 @@ class _UserSignupState extends State<UserSignup> {
   String password = "";
   String error = "";
   bool loading = false;
-  String Expertise = "";
+  String expertise = "";
   bool _obscured = false;
 
   String _selectedExpertise = "Beginner";
@@ -175,7 +175,7 @@ class _UserSignupState extends State<UserSignup> {
                                 labelText: "Expertise",
                                 hintText: 'Expertise',
                                 filled: true, // Needed for adding a fill color
-                                fillColor: Colors.grey,
+                                fillColor: Colors.grey[400],
                                 isDense: true, // Reduces height a bit
                                 border: OutlineInputBorder(
                                   borderSide: BorderSide.none, // No border
@@ -199,9 +199,9 @@ class _UserSignupState extends State<UserSignup> {
                                   child: Text("Expert"),
                                 ),
                               ],
-                              onChanged: (Expertise) {
+                              onChanged: (expertise) {
                                 setState(() {
-                                  _selectedExpertise = Expertise!;
+                                  _selectedExpertise = expertise!;
                                 });
                               },
                             ),

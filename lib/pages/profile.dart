@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:garden/components/header_widget.dart';
+import 'package:garden/pages/account_setting_player.dart';
 import 'package:garden/pages/badge.dart';
 import 'package:garden/pages/garden.dart';
 import 'package:garden/pages/mission.dart';
@@ -123,11 +124,15 @@ class _UserProfileState extends State<UserProfile> {
                 leading: const Icon(Icons.manage_accounts),
                 title: const Text('Account Setting'),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AccountSettingPlayer()),
+                  );
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.logout),
+                leading: const Icon(Icons.delete_forever),
                 title: const Text('Delete Account'),
                 onTap: () async {
                   //Navigator.pop(context);

@@ -80,19 +80,19 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
                 height: 8.5.h,
                 width: 100.w,
                 decoration: BoxDecoration(
-                    color: const Color(0xff28292a),
+                    color: Colors.teal,
                     borderRadius: BorderRadius.circular(45),
                     boxShadow: const [
                       BoxShadow(
                           spreadRadius: 2,
-                          color: const Color(0xff28292a),
+                          color: Colors.teal,
                           offset: Offset(3, 3),
                           blurRadius: 15)
                     ]),
                 margin: EdgeInsets.only(bottom: 6.h),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xff28292a),
+                    backgroundColor: Colors.teal,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(45.0),
                     ),
@@ -130,19 +130,19 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
                 height: 8.5.h,
                 width: 100.w,
                 decoration: BoxDecoration(
-                    color: const Color(0xff28292a),
+                    color: Colors.teal,
                     borderRadius: BorderRadius.circular(45),
                     boxShadow: const [
                       BoxShadow(
                           spreadRadius: 2,
-                          color: const Color(0xff28292a),
+                          color: Colors.teal,
                           offset: Offset(3, 3),
                           blurRadius: 15)
                     ]),
                 margin: EdgeInsets.only(bottom: 6.h),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xff28292a),
+                    backgroundColor: Colors.teal,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(45.0),
                     ),

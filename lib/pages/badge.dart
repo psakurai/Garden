@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:garden/components/imagedialog.dart';
 import 'package:garden/utils/styles.dart';
 
 class PlayerBadge extends StatefulWidget {
@@ -17,6 +18,8 @@ class PlayerBadgeState extends State<PlayerBadge> {
   List<String> missionName = [];
   List<String> missionDescription = [];
   List<String> missionStatus = [];
+
+  List<String> image = [];
 
   Future<void> getMissionData() async {
     missionName.clear();
@@ -47,6 +50,12 @@ class PlayerBadgeState extends State<PlayerBadge> {
     CollectionReference<Map<String, dynamic>>;
   }
 
+  Future<void> _getImageUrls() async {
+    for (int i = 0; i < 2; i++) {
+      image.add('assets/images/B' + i.toString() + '.png');
+    }
+  }
+
   late CollectionReference<Map<String, dynamic>> ref;
   @override
   void initState() {
@@ -57,6 +66,7 @@ class PlayerBadgeState extends State<PlayerBadge> {
         .doc(userFirebase!.uid)
         .collection('whichmission');
     getMissionData();
+    _getImageUrls();
     super.initState();
   }
 
@@ -98,7 +108,14 @@ class PlayerBadgeState extends State<PlayerBadge> {
                             ),
                           ),
                           child: Text('View Badge'),
-                          onPressed: () {},
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (_) =>
+                                    // ignore: prefer_interpolation_to_compose_strings
+                                    //ImageDialog(images[index]))
+                                    ImageDialog(image[index]));
+                          },
                         ),
                       );
                     }

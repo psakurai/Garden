@@ -531,4 +531,72 @@ class AuthService {
       print(e.toString());
     }
   }
+
+  Future<void> updatePlayerDetails(String username, String expertise) async {
+    try {
+      String missionName = "";
+      String missionDescription = "";
+      int missionDistance = 0;
+      int missionStatus = 0;
+
+      User? userFirebase = FirebaseAuth.instance.currentUser;
+      print(username);
+      print(expertise);
+      await FirebaseFirestore.instance
+          .collection('user')
+          .doc(userFirebase!.uid)
+          .update({
+        'username': username,
+        'expertise_name': expertise.toLowerCase()
+      });
+      var kk = FirebaseFirestore.instance
+          .collection('user')
+          .doc(userFirebase!.uid)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.exists) {
+          String expertiseName =
+              documentSnapshot.get('expertise_name').toString();
+
+          for (int i = 0; i < 3; i++) {
+            if (expertiseName == "beginner") {
+              missionDistance = 3;
+              missionName = "Complete $missionDistance KM";
+              missionDescription = "Player has complete $missionDistance KM.";
+            }
+            if (expertiseName == "intermediate") {
+              missionDistance = 5;
+              missionName = "Complete $missionDistance KM";
+              missionDescription = "Player has complete $missionDistance KM.";
+            }
+            if (expertiseName == "expert") {
+              missionDistance = 8;
+              missionName = "Complete $missionDistance KM";
+              missionDescription = "Player has complete $missionDistance KM.";
+            }
+            FirebaseFirestore.instance
+                .collection('mission')
+                .doc(userFirebase.uid)
+                .collection('whichmission')
+                .doc(userFirebase.uid + i.toString())
+                .set({
+              'mission_name': missionName,
+              'mission_description': missionDescription,
+              'mission_distance': missionDistance + i,
+              'mission_status': missionStatus,
+            });
+          }
+        }
+      });
+      Fluttertoast.showToast(
+          msg: "Player details updated successfully",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          fontSize: 20.0,
+          backgroundColor: Colors.green.withOpacity(0.8),
+          textColor: Colors.white);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }
