@@ -1,16 +1,18 @@
-# garden
+# Jogging Tracker Based on Augmented Reality (Garden)
 
-A new Flutter project.
+Project Name: Garden
 
-## Getting Started
+Project Description: Garden is a jogging tracker application that allows users to track their progress, set goals, and compete with friends. It also includes various features that make jogging more interactive and enjoyable.
 
-This project is a starting point for a Flutter application.
+Technologies Used: Flutter, Firebase, Google Maps API
 
-A few resources to get you started if this is your first Flutter project:
+Project Duration: 4 months
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Project Role: Lead Developer
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Project Detail:
+
+- Developed a user-friendly and interactive application that is easy to use and navigate.
+- Implemented various features that make jogging more enjoyable, such as levelling up, collecting gold coins, completing missions, and unlocking badges.
+- Integrated Firebase to store user data and track user progress.
+- Deployed the application to the Google Play Store and the App Store.
