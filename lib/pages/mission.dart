@@ -101,27 +101,6 @@ class MissionState extends State<Mission> {
                         tileColor: Colors.red[100],
                       );
                     }
-                    // return Container(
-                    //   padding: EdgeInsets.only(top: 2),
-                    //   child: Card(
-                    //     color: colorstatus,
-                    //     child: Padding(
-                    //       padding: const EdgeInsets.all(8.0),
-                    //       child: Container(
-                    //         child: Column(
-                    //           children: [
-                    //             Text(
-                    //               snapshot.data!.docs[index]['mission_name'],
-                    //               style: const TextStyle(
-                    //                   fontSize: 30,
-                    //                   fontWeight: FontWeight.bold),
-                    //             ),
-                    //           ],
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // );
                   });
             } else {
               return const CircularProgressIndicator();

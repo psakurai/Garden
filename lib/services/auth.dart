@@ -16,10 +16,7 @@ class AuthService {
 
   // auth change user stream
   Stream<UserData?> get user {
-    return _auth
-        .authStateChanges()
-        //.map((User? user) => _userFromFirebaseUser(user));
-        .map(_userFromFirebaseUser);
+    return _auth.authStateChanges().map(_userFromFirebaseUser);
   }
 
   // sign in anon
@@ -39,7 +36,7 @@ class AuthService {
     }
   }
 
-  // sign in email pass
+  // Sign In function with email and password.
   Future signInEmailPassword(String email, String password) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
@@ -52,17 +49,13 @@ class AuthService {
     }
   }
 
-  // register email pass
+  // Sign Up an Account With Email and Password
   Future signUpEmailPassword(String email, String username, String password,
       String _selectedExpertise) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User? user = result.user;
-      //var userFirebase = _auth.currentUser;
-      // int role = 1;
-      // CollectionReference ref = FirebaseFirestore.instance.collection('users');
-      // ref.doc(userFirebase!.uid).set({'email': email, 'role': role});
       await DatabaseService(uid: user!.uid).updateUserData(
           email, username, password, _selectedExpertise.toLowerCase(), 1);
       await DatabaseService(uid: user.uid).updateEmailPlayerData(email);
@@ -79,15 +72,12 @@ class AuthService {
     }
   }
 
+  // Create Player Funnction
   Future createPlayer(String email, String username, String password) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User? user = result.user;
-      //var userFirebase = _auth.currentUser;
-      // int role = 1;
-      // CollectionReference ref = FirebaseFirestore.instance.collection('users');
-      // ref.doc(userFirebase!.uid).set({'email': email, 'role': role});
       await DatabaseService(uid: user!.uid)
           .updateUserData(email, username, password, 'beginner', 1);
       await DatabaseService(uid: user.uid).updateEmailPlayerData(email);
@@ -99,7 +89,8 @@ class AuthService {
       await DatabaseService(uid: user.uid).initialUpdateSeedData();
       await sendVerificationEmail();
       await signOut();
-      await signInEmailPassword("arifamiruddin@graduate.utm.my", "password");
+      await signInEmailPassword(
+          "arifamiruddin@graduate.utm.my", "AdminPass123");
       return 1;
     } catch (e) {
       print(e.toString());
@@ -107,7 +98,7 @@ class AuthService {
     }
   }
 
-  // signout
+  // SignOut function
   Future signOut() async {
     try {
       return await _auth.signOut();
@@ -117,6 +108,7 @@ class AuthService {
     }
   }
 
+  // Forgot Password Function/Reset Password
   Future resetPassword(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
@@ -136,6 +128,7 @@ class AuthService {
     }
   }
 
+  // Delete Account Function
   Future<void> deleteAccount() async {
     try {
       User? userFirebase = FirebaseAuth.instance.currentUser;
@@ -153,6 +146,7 @@ class AuthService {
     }
   }
 
+  // Deactivate Playe's Account Function by Username
   Future<void> deactivateAccountUsername(username) async {
     try {
       var playerUID = "";
@@ -200,6 +194,7 @@ class AuthService {
     }
   }
 
+  // Reactivate Player's Account Function by Username
   Future<void> reactivateAccountUsername(username) async {
     try {
       var accessLevel = "";
@@ -248,7 +243,7 @@ class AuthService {
     }
   }
 
-//emailPlayer
+  // Deactivate Playe's Account Function by Email
   Future<void> deactivateAccountEmail(email) async {
     try {
       var accessLevel = "";
@@ -296,6 +291,7 @@ class AuthService {
     }
   }
 
+  // Reactivate Player's Account Function by Email
   Future<void> reactivateAccountEmail(email) async {
     try {
       var accessLevel = "";
@@ -344,6 +340,7 @@ class AuthService {
     }
   }
 
+  // Delete Account By Email Function
   Future<void> deleteEmailPlayer(String email) async {
     try {
       var accessLevel = "";
@@ -393,6 +390,7 @@ class AuthService {
     }
   }
 
+  // Delete Account By Username Function
   Future<void> deleteUsernamePlayer(String username) async {
     try {
       var accessLevel = "";
@@ -420,8 +418,7 @@ class AuthService {
             userFirebase!.delete();
             await signOut();
             await signInEmailPassword(
-                "arifamiruddin@graduate.utm.my", "password");
-
+                "arifamiruddin@graduate.utm.my", "AdminPass123");
             Fluttertoast.showToast(
                 msg: "Account deleted successfully",
                 toastLength: Toast.LENGTH_SHORT,
@@ -445,6 +442,7 @@ class AuthService {
     }
   }
 
+  // Send Verification Email Function Upon Registering
   Future sendVerificationEmail() async {
     try {
       final user = FirebaseAuth.instance.currentUser!;
@@ -495,6 +493,7 @@ class AuthService {
     }
   }
 
+  // Update Player Username Function
   Future<void> updatePlayerUsername(String email, String username) async {
     try {
       var playerUID = "";
@@ -540,8 +539,6 @@ class AuthService {
       int missionStatus = 0;
 
       User? userFirebase = FirebaseAuth.instance.currentUser;
-      print(username);
-      print(expertise);
       await FirebaseFirestore.instance
           .collection('user')
           .doc(userFirebase!.uid)
@@ -557,7 +554,6 @@ class AuthService {
         if (documentSnapshot.exists) {
           String expertiseName =
               documentSnapshot.get('expertise_name').toString();
-
           for (int i = 0; i < 3; i++) {
             if (expertiseName == "beginner") {
               missionDistance = 3;

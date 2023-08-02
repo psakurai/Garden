@@ -11,12 +11,14 @@ class Ranking extends StatefulWidget {
 }
 
 class RankingState extends State<Ranking> {
+  // Code To Retrieve Total Distance I Descending Order
   final ref = FirebaseFirestore.instance
       .collection("totaldistance")
       .orderBy('distance', descending: true);
   Color? colorstatus;
   String currentUsername = "";
 
+  // Get Current User Function
   Future<void> getCurrentUser() async {
     User? userFirebase = FirebaseAuth.instance.currentUser;
     var kk = FirebaseFirestore.instance
@@ -51,9 +53,11 @@ class RankingState extends State<Ranking> {
           stream: ref.snapshots(),
           builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasData) {
+              // Code to show Player List
               return ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (context, index) {
+                    // Code To Check If The Listed Player Is Current User
                     if (currentUsername ==
                         snapshot.data!.docs[index]['username']) {
                       colorstatus = Colors.green;
@@ -69,8 +73,6 @@ class RankingState extends State<Ranking> {
                           child: Container(
                             child: Column(
                               children: [
-                                // Image.network(snapshot.data!.docs[index]['image']),
-
                                 Text(
                                   snapshot.data!.docs[index]['distance']
                                           .toStringAsFixed(3) +

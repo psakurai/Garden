@@ -121,7 +121,7 @@ class DatabaseService {
     });
   }
 
-  // function tambah level, tapi make sure call after update distance, sebab level call value distance
+  // Update User Level Function
   Future updateLevelData() async {
     int? level = 1;
     User? userFirebase = FirebaseAuth.instance.currentUser;
@@ -151,21 +151,12 @@ class DatabaseService {
 
   Future initialUpdateGoldData() async {
     int gold = 0;
-    //User? userFirebase = FirebaseAuth.instance.currentUser;
-    // var kk = FirebaseFirestore.instance
-    //     .collection('gold')
-    //     .doc(userFirebase!.uid)
-    //     .get()
-    //     .then((DocumentSnapshot documentSnapshot) {
-    //   if (documentSnapshot.exists) {
-    //     gold = int.tryParse(documentSnapshot.get('distance').toString());
-    //   }
-    // });
     return await gardenCollectionGold.doc(uid).set({
       'gold': gold,
     });
   }
 
+  // Earn an In-Game Coin Function
   Future updateGoldData(double distance) async {
     int currentGold = 0;
     int distanceToGold = 0;
@@ -270,7 +261,7 @@ class DatabaseService {
     });
   }
 
-  //expertise_name, mission id ni index mission(bergantung pada expertise, dengan berapa value mission dia nak)
+  //Update Mission Status Function
   Future<void> updateMissionStatusData(int missionID, int pass) async {
     User? userFirebase = FirebaseAuth.instance.currentUser;
     var kk = FirebaseFirestore.instance
@@ -325,33 +316,4 @@ class DatabaseService {
   Stream<QuerySnapshot> get user {
     return gardenCollection.snapshots();
   }
-
-  // User? userFirebase = FirebaseAuth.instance.currentUser;
-  //   var kk = FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(userFirebase!.uid)
-  //       .get()
-  //       .then((DocumentSnapshot documentSnapshot) {
-  //     if (documentSnapshot.exists) {
-  //       if (documentSnapshot.get('role') == 1) {
-  //         Navigator.push(
-  //           context,
-  //           MaterialPageRoute(builder: (context) => const BottomNav()),
-  //         );
-  //       } else if (documentSnapshot.get('role') == 0) {
-  //         Navigator.push(
-  //           context,
-  //           MaterialPageRoute(builder: (context) => Admin()),
-  //         );
-  //       }
-  //     } else {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => const UserSignIn()),
-  //       );
-  //     }
-  //   });
-  //   return Scaffold(
-  //     backgroundColor: background,
-  //   );
 }

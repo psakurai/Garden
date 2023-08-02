@@ -57,6 +57,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     }
   }
 
+  // Location Permission Function
   Future<bool> _handleLocationPermission() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -86,6 +87,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     return true;
   }
 
+  // Get Live Location Function
   Future<void> getCurrentLocation() async {
     final hasPermission = await _handleLocationPermission();
 
@@ -112,14 +114,11 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
         ),
       );
       if (isRecord == 1) {
-        //prevpolylineCoordinates.clear();
         polylineCoordinates
             .add(LatLng(newlocation.latitude, newlocation.longitude));
 
         start(newlocation.speed * 3.6);
       } else if (isRecord == 2) {
-        //prevpolylineCoordinates = polylineCoordinates;
-
         end();
         polylineCoordinates.clear();
         isRecord = 0;
@@ -127,26 +126,11 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
       setState(() {
         _currentLocation = newlocation;
       });
-
-      // print(position == null ? 'Unknown' : '${position.latitude.toString()}, ${position.longitude.toString()}');
     });
   }
 
+  // Set Location Marker Function
   void setCustomMarkerIcon() {
-    //   BitmapDescriptor.fromAssetImage(
-    //           ImageConfiguration.empty, "assets/images/Pin_source.png")
-    //       .then(
-    //     (icon) {
-    //       startIcon = icon;
-    //     },
-    //   );
-    //   BitmapDescriptor.fromAssetImage(
-    //           ImageConfiguration.empty, "assets/images/Pin_destination.png")
-    //       .then(
-    //     (icon) {
-    //       endIcon = icon;
-    //     },
-    //   );
     BitmapDescriptor.fromAssetImage(
             ImageConfiguration.empty, "assets/images/Badge.png")
         .then(
@@ -156,6 +140,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     );
   }
 
+  // Calculate Distance Function
   double calculateDistance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;
     var a = 0.5 -
@@ -164,6 +149,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     return 12742 * asin(sqrt(a));
   }
 
+  // Start Record Distance Function
   Future<void> start(double speed) async {
     double totalDistance = 0;
     for (var i = 0; i < polylineCoordinates.length - 1; i++) {
@@ -178,6 +164,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     averagespeed = totalspeed / distance;
   }
 
+  // End Record Distance Function
   Future<void> end() async {
     final FirebaseAuth _auth = FirebaseAuth.instance;
     var userFirebase = _auth.currentUser;
@@ -204,6 +191,7 @@ class OrderTrackingPageState extends State<OrderTrackingPage> {
     }
   }
 
+  // Draw Polyline Coordinates Function
   Future<void> startPolylineCoordinates() async {
     if (statusStartOrEnd == "Start") {
       setState(() => isRecord = 1);

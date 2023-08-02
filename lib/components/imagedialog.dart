@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Code to Show Image Widget
 class ImageDialog extends StatelessWidget {
   final String imageUrl;
 

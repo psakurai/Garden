@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:garden/components/header_widget.dart';
+import 'package:garden/pages/account_setting_admin.dart';
 import 'package:garden/pages/sign_in.dart';
 import 'package:garden/services/auth.dart';
 import 'package:garden/utils/styles.dart';
@@ -53,7 +54,11 @@ class _AdminState extends State<Admin> {
                 leading: const Icon(Icons.manage_accounts),
                 title: const Text('Account Setting'),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AccountSettingAdmin()),
+                  );
                 },
               ),
               ListTile(
@@ -201,7 +206,8 @@ class _AdminState extends State<Admin> {
                                 dynamic result = await _auth.createPlayer(
                                     email, username, password);
                                 if (result == null) {
-                                  setState(() => error = 'error beb');
+                                  setState(() => error =
+                                      'Player Account Could Not Be Created');
                                   loading = false;
                                 } else {
                                   setState(() => error = '');

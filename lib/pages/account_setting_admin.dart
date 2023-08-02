@@ -6,14 +6,14 @@ import 'package:garden/components/header_widget.dart';
 import 'package:garden/services/auth.dart';
 import 'package:garden/utils/styles.dart';
 
-class AccountSettingPlayer extends StatefulWidget {
-  const AccountSettingPlayer({super.key});
+class AccountSettingAdmin extends StatefulWidget {
+  const AccountSettingAdmin({super.key});
 
   @override
-  State<AccountSettingPlayer> createState() => _AccountSettingPlayerState();
+  State<AccountSettingAdmin> createState() => _AccountSettingAdminState();
 }
 
-class _AccountSettingPlayerState extends State<AccountSettingPlayer> {
+class _AccountSettingAdminState extends State<AccountSettingAdmin> {
   final AuthService _auth = AuthService();
   String? isExist;
   String? expertiseName;
@@ -212,6 +212,8 @@ class _AccountSettingPlayerState extends State<AccountSettingPlayer> {
                                         if (username!.isNotEmpty) {
                                           if (username!.length < 21 &&
                                               username!.length > 7) {
+                                            print(username);
+                                            print(_selectedExpertise);
                                             await _auth.updatePlayerDetails(
                                                 username!, _selectedExpertise);
                                           }
